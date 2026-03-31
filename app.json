@@ -30,6 +30,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cdc15bed-de2c-43bb-8391-13b0b9fbed8c"
+      }
+    },
+    "owner": "abekrox"
   }
 }
