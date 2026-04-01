@@ -6,12 +6,16 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://bakaiti-backend.onrender.com/api",
+        "EXPO_PUBLIC_SOCKET_URL": "https://bakaiti-backend.onrender.com"
+      }
     },
     "preview": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://192.168.31.188:5000/api",
-        "EXPO_PUBLIC_SOCKET_URL": "http://192.168.31.188:5000"
+        "EXPO_PUBLIC_API_URL": "https://bakaiti-backend.onrender.com/api",
+        "EXPO_PUBLIC_SOCKET_URL": "https://bakaiti-backend.onrender.com"
       },
       "distribution": "internal"
     },
