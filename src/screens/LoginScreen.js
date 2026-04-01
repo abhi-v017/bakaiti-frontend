@@ -22,7 +22,6 @@ export default function LoginScreen({ navigation }) {
     }
     try {
       setLoading(true);
-      alert("API: " + process.env.EXPO_PUBLIC_API_URL);
       await login(email.trim().toLowerCase(), password);
     } catch (err) {
       Alert.alert('Login failed', err.message);
