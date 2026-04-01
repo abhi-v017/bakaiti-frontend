@@ -14,15 +14,15 @@
     },
     "preview": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://bakaiti-backend.onrender.com/api",
-        "EXPO_PUBLIC_SOCKET_URL": "https://bakaiti-backend.onrender.com"
+        "EXPO_PUBLIC_API_URL": "https://bakaiti-backend-production.up.railway.app/api",
+        "EXPO_PUBLIC_SOCKET_URL": "https://bakaiti-backend-production.up.railway.app"
       },
       "distribution": "internal"
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://bakaiti-backend.onrender.com/api",
-        "EXPO_PUBLIC_SOCKET_URL": "https://bakaiti-backend.onrender.com"
+        "EXPO_PUBLIC_API_URL": "https://bakaiti-backend-production.up.railway.app/api",
+        "EXPO_PUBLIC_SOCKET_URL": "https://bakaiti-backend-production.up.railway.app"
       },
       "autoIncrement": true
     }

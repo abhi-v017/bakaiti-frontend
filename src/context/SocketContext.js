@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 
-const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'https://bakaiti-backend.onrender.com';
+const SOCKET_URL = process.env.EXPO_PUBLIC_SOCKET_URL || 'https://bakaiti-backend-production.up.railway.app';
 
 const SocketContext = createContext({});
 
