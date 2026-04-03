@@ -1,6 +1,6 @@
 // src/services/authService.js
 import api from './api';
 
-export const loginApi    = (email, password)              => api.post('/auth/login',    { email, password });
-export const registerApi = (username, email, password)    => api.post('/auth/register', { username, email, password });
-export const getMeApi    = ()                              => api.get('/auth/me');
+export const loginApi    = (username, password) => api.post('/auth/login',    { username, password });
+export const registerApi = (username, password) => api.post('/auth/register', { username, password });
+export const getMeApi    = ()                    => api.get('/auth/me');

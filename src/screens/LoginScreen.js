@@ -12,17 +12,17 @@ import { useTheme } from '../context/ThemeContext';
 export default function LoginScreen({ navigation }) {
   const { login }  = useAuth();
   const { colors } = useTheme();
-  const [email,    setEmail]    = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading,  setLoading]  = useState(false);
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      return Alert.alert('Missing fields', 'Please enter your email and password.');
+    if (!username.trim() || !password.trim()) {
+      return Alert.alert('Missing fields', 'Please enter your username and password.');
     }
     try {
       setLoading(true);
-      await login(email.trim().toLowerCase(), password);
+      await login(username.trim(), password);
     } catch (err) {
       Alert.alert('Login failed', err.message);
     } finally {
@@ -37,7 +37,10 @@ export default function LoginScreen({ navigation }) {
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <ScrollView contentContainerStyle={s.container} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={s.container}
+          keyboardShouldPersistTaps="handled"
+        >
           {/* Logo */}
           <View style={s.hero}>
             <View style={s.logoCircle}>
@@ -49,16 +52,16 @@ export default function LoginScreen({ navigation }) {
 
           {/* Form */}
           <View style={s.form}>
-            <Text style={s.label}>Email</Text>
+            <Text style={s.label}>Username</Text>
             <TextInput
               style={s.input}
-              placeholder="you@example.com"
+              placeholder="Enter your username"
               placeholderTextColor={colors.textMuted}
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
+              value={username}
+              onChangeText={setUsername}
               autoCapitalize="none"
               autoCorrect={false}
+              returnKeyType="next"
             />
 
             <Text style={s.label}>Password</Text>
@@ -69,8 +72,8 @@ export default function LoginScreen({ navigation }) {
               value={password}
               onChangeText={setPassword}
               secureTextEntry
-              onSubmitEditing={handleLogin}
               returnKeyType="done"
+              onSubmitEditing={handleLogin}
             />
 
             <TouchableOpacity
@@ -94,11 +97,6 @@ export default function LoginScreen({ navigation }) {
               </Text>
             </TouchableOpacity>
           </View>
-
-          {/* Test hint */}
-          <Text style={s.hint}>
-            Test accounts: alice@test.com / bob@test.com{'\n'}Password: test1234
-          </Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -110,16 +108,20 @@ const styles = (c) => StyleSheet.create({
   container: { flexGrow: 1, justifyContent: 'center', padding: 28 },
   hero:      { alignItems: 'center', marginBottom: 44 },
   logoCircle: {
-    width: 80, height: 80, borderRadius: 40,
+    width: 88, height: 88, borderRadius: 44,
     backgroundColor: c.primaryLight,
     justifyContent: 'center', alignItems: 'center',
     marginBottom: 16,
   },
-  logoEmoji: { fontSize: 36 },
+  logoEmoji: { fontSize: 40 },
   appName:   { fontSize: 34, fontWeight: '800', color: c.primary, letterSpacing: -1 },
-  tagline:   { fontSize: 13, color: c.textMuted, marginTop: 4 },
-  form:      { gap: 6 },
-  label:     { fontSize: 12, fontWeight: '600', color: c.textSecondary, marginTop: 12, marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
+  tagline:   { fontSize: 13, color: c.textMuted, marginTop: 6 },
+  form:      { gap: 4 },
+  label: {
+    fontSize: 12, fontWeight: '700', color: c.textSecondary,
+    marginTop: 14, marginBottom: 6,
+    textTransform: 'uppercase', letterSpacing: 0.6,
+  },
   input: {
     backgroundColor: c.inputBg, borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 14,
@@ -128,15 +130,11 @@ const styles = (c) => StyleSheet.create({
   },
   btn: {
     backgroundColor: c.primary, borderRadius: 12,
-    paddingVertical: 16, alignItems: 'center', marginTop: 20,
+    paddingVertical: 16, alignItems: 'center', marginTop: 22,
   },
-  btnDisabled: { opacity: 0.7 },
+  btnDisabled: { opacity: 0.65 },
   btnText:     { color: '#fff', fontSize: 16, fontWeight: '700' },
   linkRow:     { alignItems: 'center', marginTop: 18 },
   linkText:    { color: c.textSecondary, fontSize: 14 },
   linkBold:    { color: c.primary, fontWeight: '700' },
-  hint: {
-    textAlign: 'center', color: c.textMuted, fontSize: 11,
-    marginTop: 36, lineHeight: 18,
-  },
 });

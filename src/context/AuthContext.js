@@ -1,4 +1,4 @@
-// src/context/AuthContext.js — JWT auth state, persisted via AsyncStorage
+// src/context/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
@@ -8,9 +8,9 @@ const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [user,    setUser]    = useState(null);
   const [token,   setToken]   = useState(null);
-  const [loading, setLoading] = useState(true); // true until session restored
+  const [loading, setLoading] = useState(true);
 
-  // ── Restore session on app launch ─────────────────────────────
+  // Restore session on app launch
   useEffect(() => {
     (async () => {
       try {
@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
           setUser(res.data);
         }
       } catch {
-        // Token expired or invalid — clear it
         await AsyncStorage.removeItem('authToken');
       } finally {
         setLoading(false);
@@ -30,9 +29,9 @@ export const AuthProvider = ({ children }) => {
     })();
   }, []);
 
-  // ── Login ─────────────────────────────────────────────────────
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
+  // Login with username + password
+  const login = async (username, password) => {
+    const res = await api.post('/auth/login', { username, password });
     const { token: t, user: u } = res.data;
     await AsyncStorage.setItem('authToken', t);
     api.defaults.headers.common['Authorization'] = `Bearer ${t}`;
@@ -41,18 +40,17 @@ export const AuthProvider = ({ children }) => {
     return u;
   };
 
-  // ── Register ──────────────────────────────────────────────────
-  const register = async (username, email, password) => {
-    const res = await api.post('/auth/register', { username, email, password });
+  // Register with username + password
+  const register = async (username, password) => {
+    const res = await api.post('/auth/register', { username, password });
     const { token: t, user: u } = res.data;
     await AsyncStorage.setItem('authToken', t);
     api.defaults.headers.common['Authorization'] = `Bearer ${t}`;
     setToken(t);
     setUser(u);
-    return u;
+    return u; // includes userId so RegisterScreen can show it
   };
 
-  // ── Logout ────────────────────────────────────────────────────
   const logout = async () => {
     await AsyncStorage.removeItem('authToken');
     delete api.defaults.headers.common['Authorization'];
@@ -60,7 +58,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // ── Patch user locally (after profile update) ─────────────────
   const updateUser = (updates) => setUser((prev) => ({ ...prev, ...updates }));
 
   return (

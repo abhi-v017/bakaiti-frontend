@@ -1,8 +1,9 @@
-// src/screens/ProfileScreen.js — View/edit own profile + dark mode toggle
+// src/screens/ProfileScreen.js
 import React, { useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   ScrollView, ActivityIndicator, Alert, Switch,
+  Platform, Clipboard,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
@@ -20,6 +21,7 @@ export default function ProfileScreen() {
   const [bio,       setBio]       = useState(user?.bio || '');
   const [avatarUri, setAvatarUri] = useState(null);
   const [saving,    setSaving]    = useState(false);
+  const [copied,    setCopied]    = useState(false);
 
   const pickAvatar = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -58,8 +60,14 @@ export default function ProfileScreen() {
     setEditing(false);
   };
 
+  const copyUserId = () => {
+    Clipboard.setString(user?.userId || '');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const confirmLogout = () =>
-    Alert.alert('Log out', 'Are you sure you want to log out?', [
+    Alert.alert('Log out', 'Are you sure?', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Log out', style: 'destructive', onPress: logout },
     ]);
@@ -70,6 +78,7 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={s.safe}>
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+
         {/* Title row */}
         <View style={s.titleRow}>
           <Text style={s.title}>Profile</Text>
@@ -96,6 +105,19 @@ export default function ProfileScreen() {
 
         {!editing && <Text style={s.displayName}>@{user?.username}</Text>}
 
+        {/* ── User ID card — always visible ───────────────── */}
+        <TouchableOpacity style={s.idCard} onPress={copyUserId} activeOpacity={0.75}>
+          <View style={s.idCardLeft}>
+            <Text style={s.idCardLabel}>YOUR USER ID</Text>
+            <Text style={s.idCardValue}>{user?.userId}</Text>
+            <Text style={s.idCardHint}>Share this with friends so they can find you</Text>
+          </View>
+          <View style={s.copyBtn}>
+            <Text style={s.copyBtnIcon}>{copied ? '✅' : '📋'}</Text>
+            <Text style={s.copyBtnText}>{copied ? 'Copied!' : 'Copy'}</Text>
+          </View>
+        </TouchableOpacity>
+
         {/* Info card */}
         <View style={s.card}>
           <View style={s.field}>
@@ -110,11 +132,6 @@ export default function ProfileScreen() {
                   placeholderTextColor={colors.textMuted}
                 />
               : <Text style={s.fieldValue}>@{user?.username}</Text>}
-          </View>
-
-          <View style={[s.field, s.fieldBorder]}>
-            <Text style={s.fieldLabel}>EMAIL</Text>
-            <Text style={[s.fieldValue, { color: colors.textSecondary }]}>{user?.email}</Text>
           </View>
 
           <View style={[s.field, s.fieldBorder]}>
@@ -176,20 +193,42 @@ export default function ProfileScreen() {
 }
 
 const styles = (c) => StyleSheet.create({
-  safe:        { flex: 1, backgroundColor: c.background },
-  scroll:      { padding: 20, paddingBottom: 48 },
-  titleRow:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
-  title:       { fontSize: 28, fontWeight: '800', color: c.text },
-  editChip:    { backgroundColor: c.primaryLight, paddingHorizontal: 16, paddingVertical: 7, borderRadius: 20 },
-  editChipText:{ color: c.primary, fontWeight: '700', fontSize: 13 },
-  avatarWrap:  { alignSelf: 'center', marginBottom: 10, position: 'relative' },
+  safe:         { flex: 1, backgroundColor: c.background },
+  scroll:       { padding: 20, paddingBottom: 48 },
+  titleRow:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 },
+  title:        { fontSize: 28, fontWeight: '800', color: c.text },
+  editChip:     { backgroundColor: c.primaryLight, paddingHorizontal: 16, paddingVertical: 7, borderRadius: 20 },
+  editChipText: { color: c.primary, fontWeight: '700', fontSize: 13 },
+
+  avatarWrap: { alignSelf: 'center', marginBottom: 10, position: 'relative' },
   cameraBadge: {
     position: 'absolute', bottom: 0, right: 0,
     backgroundColor: c.primary, width: 30, height: 30, borderRadius: 15,
     justifyContent: 'center', alignItems: 'center',
     borderWidth: 2, borderColor: c.background,
   },
-  displayName: { textAlign: 'center', color: c.textSecondary, fontSize: 15, marginBottom: 22 },
+  displayName: { textAlign: 'center', color: c.textSecondary, fontSize: 15, marginBottom: 20 },
+
+  // User ID card
+  idCard: {
+    backgroundColor: c.primaryLight,
+    borderRadius: 16, padding: 16, marginBottom: 16,
+    flexDirection: 'row', alignItems: 'center',
+    borderWidth: 1, borderColor: c.primary + '35',
+  },
+  idCardLeft:   { flex: 1 },
+  idCardLabel:  { fontSize: 10, fontWeight: '700', color: c.primary, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 6 },
+  idCardValue: {
+    fontSize: 26, fontWeight: '800', color: c.primary,
+    letterSpacing: 3,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    marginBottom: 4,
+  },
+  idCardHint:   { fontSize: 11, color: c.primary + 'AA' },
+  copyBtn:      { alignItems: 'center', paddingLeft: 12 },
+  copyBtnIcon:  { fontSize: 22, marginBottom: 2 },
+  copyBtnText:  { fontSize: 11, color: c.primary, fontWeight: '600' },
+
   card: {
     backgroundColor: c.surface, borderRadius: 16,
     paddingHorizontal: 16, marginBottom: 16,
@@ -204,12 +243,14 @@ const styles = (c) => StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 9,
     fontSize: 15, color: c.text, borderWidth: 1, borderColor: c.border,
   },
-  settingRow:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14 },
-  settingLabel:{ fontSize: 15, color: c.text, fontWeight: '500' },
-  actions:     { gap: 10, marginTop: 4 },
-  btn:         { borderRadius: 14, paddingVertical: 15, alignItems: 'center' },
-  btnPrimary:  { backgroundColor: c.primary },
-  btnOutline:  { borderWidth: 1, borderColor: c.border },
-  btnDanger:   { backgroundColor: c.danger },
-  btnText:     { color: '#fff', fontSize: 15, fontWeight: '700' },
+
+  settingRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 14 },
+  settingLabel: { fontSize: 15, color: c.text, fontWeight: '500' },
+
+  actions:    { gap: 10, marginTop: 4 },
+  btn:        { borderRadius: 14, paddingVertical: 15, alignItems: 'center' },
+  btnPrimary: { backgroundColor: c.primary },
+  btnOutline: { borderWidth: 1, borderColor: c.border },
+  btnDanger:  { backgroundColor: c.danger },
+  btnText:    { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
