@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "bakiti",
-    "slug": "bakiti",
+    "name": "BanterBox",
+    "slug": "banterbox",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.abekrox.bakiti",
+      "bundleIdentifier": "com.abekrox.banterbox",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -26,16 +26,16 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.abekrox.bakiti"
+      "package": "com.abekrox.banterbox"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "owner": "abekrox",
     "extra": {
       "eas": {
-        "projectId": "cdc15bed-de2c-43bb-8391-13b0b9fbed8c"
+        "projectId": "9f03cec1-7850-41ad-b6aa-9a508ede409f"
       }
-    },
-    "owner": "abekrox"
+    }
   }
 }
