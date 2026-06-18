@@ -30,16 +30,26 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Universal alert to handle React Native Web issues
+  const showAlert = (title, msg) => {
+    if (Platform.OS === "web") {
+      window.alert(`${title}\n${msg}`);
+    } else {
+      Alert.alert(title, msg);
+    }
+  };
+
   // ── Step 1: Fetch accounts for email ──────────────────────
   const handleLookup = async () => {
-    if (!email.trim()) return Alert.alert("Required", "Enter your email");
+    if (!email.trim()) return showAlert("Required", "Enter your email");
     try {
       setLoading(true);
+      console.log("Looking up accounts for:", email.trim());
       const res = await api.post("/auth/accounts", { email: email.trim() });
       setAccounts(res.data);
       setStep("pick");
     } catch (err) {
-      Alert.alert("Not found", err.message);
+      showAlert("Not found", err.message);
     } finally {
       setLoading(false);
     }
@@ -47,13 +57,14 @@ export default function LoginScreen({ navigation }) {
 
   // ── Step 2: Login with selected account ───────────────────
   const handleLogin = async () => {
-    if (!selected) return Alert.alert("Select", "Please pick an account");
-    if (!password.trim()) return Alert.alert("Required", "Enter your password");
+    if (!selected) return showAlert("Select", "Please pick an account");
+    if (!password.trim()) return showAlert("Required", "Enter your password");
     try {
       setLoading(true);
       await login(selected._id, password);
     } catch (err) {
-      Alert.alert("Login failed", err.message);
+      console.error("Login Error:", err);
+      showAlert("Login failed", err.message);
     } finally {
       setLoading(false);
     }

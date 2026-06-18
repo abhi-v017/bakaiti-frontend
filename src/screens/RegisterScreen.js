@@ -32,17 +32,26 @@ export default function RegisterScreen({ navigation }) {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Universal alert to handle React Native Web issues
+  const showAlert = (title, msg) => {
+    if (Platform.OS === "web") {
+      window.alert(`${title}\n${msg}`);
+    } else {
+      Alert.alert(title, msg);
+    }
+  };
+
   // ── Step 1: Send OTP ───────────────────────────────────────
   const handleSendOtp = async () => {
     if (!email.trim())
-      return Alert.alert("Required", "Enter your email address");
+      return showAlert("Required", "Enter your email address");
     try {
       setLoading(true);
       await api.post("/auth/send-otp", { email: email.trim() });
       setStep("otp");
-      Alert.alert("OTP Sent", `A 6-digit code was sent to ${email}`);
+      showAlert("OTP Sent", `A 6-digit code was sent to ${email}`);
     } catch (err) {
-      Alert.alert("Error", err.message);
+      showAlert("Error", err.message);
     } finally {
       setLoading(false);
     }
@@ -51,18 +60,18 @@ export default function RegisterScreen({ navigation }) {
   // ── Step 2: Verify OTP ─────────────────────────────────────
   const handleVerifyOtp = () => {
     if (otp.trim().length !== 6)
-      return Alert.alert("Invalid", "Enter the 6-digit OTP");
+      return showAlert("Invalid", "Enter the 6-digit OTP");
     setStep("details");
   };
 
   // ── Step 3: Create account ─────────────────────────────────
   const handleRegister = async () => {
     if (!username.trim() || !password || !confirm)
-      return Alert.alert("Required", "Fill in all fields");
+      return showAlert("Required", "Fill in all fields");
     if (password !== confirm)
-      return Alert.alert("Mismatch", "Passwords do not match");
+      return showAlert("Mismatch", "Passwords do not match");
     if (password.length < 6)
-      return Alert.alert("Weak", "Password must be at least 6 characters");
+      return showAlert("Weak", "Password must be at least 6 characters");
     try {
       setLoading(true);
       const user = await register(
@@ -71,12 +80,12 @@ export default function RegisterScreen({ navigation }) {
         username.trim(),
         password,
       );
-      Alert.alert(
+      showAlert(
         "🎉 Account Created!",
         `Welcome ${user.username}!\nYour User ID: ${user.userId}\n\nShare this ID so friends can find you.`,
       );
     } catch (err) {
-      Alert.alert("Error", err.message);
+      showAlert("Error", err.message);
     } finally {
       setLoading(false);
     }
